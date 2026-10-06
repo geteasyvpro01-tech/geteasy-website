@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GetEasy - Smart Productivity Tool</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #0A0A0A; color: #FFFFFF; line-height: 1.6; }
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+        header { text-align: center; padding: 60px 20px; border-bottom: 1px solid #2A2A2A; }
+        .logo { width: 100px; height: 100px; background: linear-gradient(135deg, #FFD700, #B8860B); border-radius: 24px; display: inline-flex; align-items: center; justify-content: center; font-size: 48px; margin-bottom: 24px; box-shadow: 0 0 40px rgba(255, 215, 0, 0.3); }
+        h1 { color: #FFD700; font-size: 42px; margin-bottom: 12px; letter-spacing: 0.05em; }
+        .tagline { color: #888888; font-size: 16px; letter-spacing: 0.2em; text-transform: uppercase; }
+        .hero { text-align: center; padding: 60px 20px; }
+        .hero p { color: #AAAAAA; font-size: 18px; max-width: 600px; margin: 0 auto 40px; }
+        .btn { display: inline-block; background: linear-gradient(135deg, #FFD700, #DAA520); color: #000000; padding: 16px 48px; border-radius: 12px; text-decoration: none; font-weight: bold; font-size: 16px; letter-spacing: 0.05em; }
+        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; padding: 40px 20px; }
+        .feature { background: #141414; border: 1px solid #2A2A2A; border-radius: 16px; padding: 24px; }
+        .feature-icon { font-size: 32px; margin-bottom: 12px; }
+        .feature h3 { color: #FFD700; font-size: 18px; margin-bottom: 8px; }
+        .feature p { color: #888888; font-size: 14px; }
+        .plans { padding: 40px 20px; text-align: center; }
+        .plans h2 { color: #FFD700; font-size: 28px; margin-bottom: 30px; }
+        .plan-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; max-width: 800px; margin: 0 auto; }
+        .plan { background: #141414; border: 1px solid #2A2A2A; border-radius: 16px; padding: 20px; }
+        .plan.highlight { border: 2px solid #FFD700; }
+        .plan h4 { color: #FFFFFF; font-size: 16px; margin-bottom: 8px; }
+        .plan .price { color: #FFD700; font-size: 28px; font-weight: bold; }
+        .plan .duration { color: #888888; font-size: 12px; margin-top: 4px; }
+        .contact { text-align: center; padding: 60px 20px; border-top: 1px solid #2A2A2A; }
+        .contact h2 { color: #FFD700; font-size: 24px; margin-bottom: 20px; }
+        .contact p { color: #888888; margin-bottom: 8px; }
+        .contact a { color: #FFD700; text-decoration: none; }
+        footer { text-align: center; padding: 30px 20px; color: #555555; font-size: 12px; }
+        .legal { padding: 40px 20px; max-width: 800px; margin: 0 auto; }
+        .legal h2 { color: #FFD700; font-size: 20px; margin-bottom: 16px; }
+        .legal p { color: #888888; font-size: 13px; margin-bottom: 12px; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">⚡</div>
+        <h1>GetEasy</h1>
+        <p class="tagline">Ride • Auto Clicker</p>
+    </header>
+    <div class="hero">
+        <p>Smart productivity tool for gig workers. Automate repetitive tasks and save time — so you can focus on what matters.</p>
+        <a href="#download" class="btn">DOWNLOAD APP</a>
+    </div>
+    <div class="container">
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">⚡</div>
+                <h3>Auto Click</h3>
+                <p>Set it once, and let the app handle repetitive taps automatically.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🎯</div>
+                <h3>Smart Filters</h3>
+                <p>Choose what to accept based on your preferences.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">💰</div>
+                <h3>Earnings Tracker</h3>
+                <p>Monitor your daily value and average per ride.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🌐</div>
+                <h3>2 Languages</h3>
+                <p>English and हिंदी support for better usability.</p>
+            </div>
+        </div>
+        <div class="plans">
+            <h2>Subscription Plans</h2>
+            <div class="plan-grid">
+                <div class="plan"><h4>1 Day</h4><div class="price">₹20</div><div class="duration">24 Hours</div></div>
+                <div class="plan"><h4>1 Week</h4><div class="price">₹99</div><div class="duration">7 Days</div></div>
+                <div class="plan"><h4>15 Days</h4><div class="price">₹179</div><div class="duration">15 Days</div></div>
+                <div class="plan highlight"><h4>1 Month ⭐</h4><div class="price">₹299</div><div class="duration">30 Days</div></div>
+                <div class="plan"><h4>3 Months</h4><div class="price">₹699</div><div class="duration">90 Days</div></div>
+                <div class="plan highlight"><h4>1 Year 👑</h4><div class="price">₹1999</div><div class="duration">365 Days</div></div>
+            </div>
+        </div>
+        <div class="legal">
+            <h2>About GetEasy</h2>
+            <p>GetEasy is a personal productivity utility app that helps gig workers automate repetitive tasks on their own devices. It is a time-saving tool designed for personal, non-commercial use on applications that the user owns or has permission to automate.</p>
+            <h2>Terms & Conditions</h2>
+            <p>By using GetEasy, you agree to use the app only for lawful purposes. All payments are one-time and non-refundable. The app does not collect personal data on external servers — all information is stored locally on your device. Users are responsible for complying with third-party platform terms of service.</p>
+            <h2>Privacy Policy</h2>
+            <p>GetEasy stores all data locally on your device. We do not collect, transmit, or store any personal information on external servers. Payment information is processed by third-party payment gateways and is subject to their privacy policies.</p>
+        </div>
+    </div>
+    <div class="contact" id="download">
+        <h2>Download GetEasy</h2>
+        <p>Available for Android devices</p>
+        <p>📧 Email: <a href="mailto:support@geteasy.app">support@geteasy.app</a></p>
+        <p>✈️ Telegram: <a href="https://t.me/geteasy_support">@geteasy_support</a></p>
+    </div>
+    <footer>
+        <p>© 2026 GetEasy. All rights reserved.</p>
+        <p>Made with ❤️ in India</p>
+    </footer>
+</body>
+</html>
