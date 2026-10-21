@@ -13,26 +13,34 @@
 </head>
 <body>
     <div class="loader"></div>
-    <h2>Processing...</h2>
+    <h2>Processing Payment...</h2>
 
     <script>
         const urlParams = new URLSearchParams(window.location.search);
-        const orderId = urlParams.get('order_id');
         const sessionId = urlParams.get('session_id');
 
-        if (orderId) {
-            // 🔥 Payment Successful! App ko wapas kholo
-            document.body.innerHTML = "<h2 style='color: #22C55E;'>Payment Successful! ✅</h2><p>Redirecting to App...</p>";
-            window.location.href = "geteasy://payment_success?order_id=" + orderId;
-        } else if (sessionId) {
-            // Naya Payment Start karo
+        if (sessionId) {
             const cashfree = Cashfree({ mode: "production" });
+            
+            // 🔥 JS SDK ka use karke check karo ki payment hua ya nahi
             cashfree.checkout({
                 paymentSessionId: sessionId,
-                redirectTarget: "_self"
+                redirectTarget: "_self" // Page reload hoga
+            }).then(result => {
+                if (result.error) {
+                    // Payment Cancel ya Fail hua
+                    document.body.innerHTML = "<h2 style='color: red;'>Payment Cancelled/Failed</h2><p>You can close this window.</p>";
+                } else if (result.paymentDetails) {
+                    // Payment Success!
+                    document.body.innerHTML = "<h2 style='color: #22C55E;'>Payment Successful! ✅</h2><p>Redirecting to App...</p>";
+                    // App ko deep link bhejo
+                    window.location.href = "geteasy://payment_success";
+                }
             });
         } else {
-            document.body.innerHTML = "<h2 style='color: red;'>Invalid Session</h2>";
+            // Agar wapas aane par sessionId nahi hai, matlab success page hai
+            // Par humein iska bharosa nahi karna, hum JS SDK se hi confirm karenge
+            document.body.innerHTML = "<h2 style='color: red;'>Invalid Session</h2><p>Please try again.</p>";
         }
     </script>
 </body>
