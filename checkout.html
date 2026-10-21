@@ -13,32 +13,26 @@
 </head>
 <body>
     <div class="loader"></div>
-    <h2>Processing Payment...</h2>
+    <h2>Processing...</h2>
 
     <script>
         const urlParams = new URLSearchParams(window.location.search);
-        
-        // Agar Cashfree payment ke baad wapas bhejta hai (order_id ke sath)
         const orderId = urlParams.get('order_id');
-        
+        const sessionId = urlParams.get('session_id');
+
         if (orderId) {
             // 🔥 Payment Successful! App ko wapas kholo
             document.body.innerHTML = "<h2 style='color: #22C55E;'>Payment Successful! ✅</h2><p>Redirecting to App...</p>";
-            
-            // App ka deep link trigger karo
             window.location.href = "geteasy://payment_success?order_id=" + orderId;
-        } else {
+        } else if (sessionId) {
             // Naya Payment Start karo
-            const sessionId = urlParams.get('session_id');
-            if (sessionId) {
-                const cashfree = Cashfree({ mode: "production" });
-                cashfree.checkout({
-                    paymentSessionId: sessionId,
-                    redirectTarget: "_self" // Payment ke baad wapas isi page pe aayega
-                });
-            } else {
-                document.body.innerHTML = "<h2 style='color: red;'>Invalid Session</h2>";
-            }
+            const cashfree = Cashfree({ mode: "production" });
+            cashfree.checkout({
+                paymentSessionId: sessionId,
+                redirectTarget: "_self"
+            });
+        } else {
+            document.body.innerHTML = "<h2 style='color: red;'>Invalid Session</h2>";
         }
     </script>
 </body>
