@@ -3,44 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GetEasy Checkout</title>
+    <title>GetEasy Secure Checkout</title>
+    <!-- 🔥 Cashfree JS SDK -->
     <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
     <style>
-        body { background-color: #0A0A0A; color: #FFD700; font-family: Arial; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; flex-direction: column; }
-        .loader { border: 4px solid #1A1A1A; border-top: 4px solid #FFD700; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 20px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        body {
+            background-color: #0A0A0A;
+            color: #FFD700;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+            text-align: center;
+        }
+        .loader {
+            border: 5px solid #1A1A1A;
+            border-top: 5px solid #FFD700;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        h2 { margin-bottom: 10px; font-weight: 600; }
+        p { color: #888888; font-size: 14px; }
     </style>
 </head>
 <body>
-    <div class="loader"></div>
-    <h2>Processing Payment...</h2>
+
+    <div class="loader" id="loader"></div>
+    <h2 id="statusText">Connecting to Secure Gateway...</h2>
+    <p id="subText">Please do not close this window.</p>
 
     <script>
+        // 🔥 URL se parameters nikaalo
         const urlParams = new URLSearchParams(window.location.search);
         const sessionId = urlParams.get('session_id');
+        const orderId = urlParams.get('order_id');
 
         if (sessionId) {
+            // 🔥 CASE 1: Naya Payment Start karna hai
             const cashfree = Cashfree({ mode: "production" });
             
-            // 🔥 JS SDK ka use karke check karo ki payment hua ya nahi
             cashfree.checkout({
                 paymentSessionId: sessionId,
-                redirectTarget: "_self" // Page reload hoga
+                redirectTarget: "_self" // Payment ke baad isi page pe wapas aayega
             }).then(result => {
                 if (result.error) {
-                    // Payment Cancel ya Fail hua
-                    document.body.innerHTML = "<h2 style='color: red;'>Payment Cancelled/Failed</h2><p>You can close this window.</p>";
-                } else if (result.paymentDetails) {
-                    // Payment Success!
-                    document.body.innerHTML = "<h2 style='color: #22C55E;'>Payment Successful! ✅</h2><p>Redirecting to App...</p>";
-                    // App ko deep link bhejo
-                    window.location.href = "geteasy://payment_success";
+                    // Agar JS level pe cancel ho jaye
+                    showError();
                 }
             });
+
+        } else if (orderId) {
+            // 🔥 CASE 2: Cashfree se wapas aaya hai (Success YA Cancel)
+            // Hum yahan decide nahi karenge, bas App ko order_id bhej denge.
+            // App backend se verify karegi.
+            
+            document.getElementById("statusText").innerText = "Verifying Payment...";
+            document.getElementById("subText").innerText = "Redirecting to GetEasy App...";
+            
+            // App ko Deep Link ke through order_id bhejo
+            setTimeout(() => {
+                window.location.href = "geteasy://payment_success?order_id=" + orderId;
+            }, 500); // 0.5 second ka delay taaki text dikh jaye
+
         } else {
-            // Agar wapas aane par sessionId nahi hai, matlab success page hai
-            // Par humein iska bharosa nahi karna, hum JS SDK se hi confirm karenge
-            document.body.innerHTML = "<h2 style='color: red;'>Invalid Session</h2><p>Please try again.</p>";
+            // 🔥 CASE 3: Galat URL
+            showError();
+        }
+
+        function showError() {
+            document.getElementById("loader").style.display = "none";
+            document.getElementById("statusText").innerText = "Invalid Request";
+            document.getElementById("statusText").style.color = "#EF4444";
+            document.getElementById("subText").innerText = "Payment Session or Order ID missing.";
         }
     </script>
 </body>
