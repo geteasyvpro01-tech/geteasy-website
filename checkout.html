@@ -24,6 +24,7 @@
         const orderId = urlParams.get('order_id');
 
         if (sessionId) {
+            // 🔥 Naya Payment Start karo
             const cashfree = Cashfree({ mode: "production" });
             cashfree.checkout({
                 paymentSessionId: sessionId,
@@ -32,14 +33,24 @@
                 if (result.error) { showError(); }
             });
         } else if (orderId) {
-            document.getElementById("loader").style.display = "none";
-            document.getElementById("statusText").innerText = "Payment Successful!";
-            document.getElementById("statusText").style.color = "#22C55E";
-            document.getElementById("subText").innerText = "Redirecting to app...";
+            // 🔥 Payment ke baad wapas aaya hai
+            document.getElementById("loader").style.display = "block";
+            document.getElementById("statusText").innerText = "Verifying Payment...";
+            document.getElementById("subText").innerText = "Please wait, checking with bank...";
             
-            setTimeout(() => {
-                window.location.href = "geteasy://payment_success?order_id=" + orderId;
-            }, 1500);
+            // 3 SECOND WAIT TIMER
+            let count = 3;
+            const timer = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    document.getElementById("subText").innerText = `Redirecting to app in ${count} seconds...`;
+                } else {
+                    clearInterval(timer);
+                    document.getElementById("statusText").innerText = "Payment Successful!";
+                    document.getElementById("statusText").style.color = "#22C55E";
+                    window.location.href = "geteasy://payment_success?order_id=" + orderId;
+                }
+            }, 1000);
         } else {
             showError();
         }
