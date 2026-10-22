@@ -20,6 +20,11 @@
   <button id="payBtn" style="display:none;">Pay Now</button>
 </div>
 <script>
+// 🔥 FIX: Cashfree ko batao ki hum normal Chrome browser hain, koi WebView nahi
+Object.defineProperty(navigator, 'userAgent', {
+    get: function () { return 'Mozilla/5.0 (Linux; Android 13; SM-S918B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36'; }
+});
+
 const params = new URLSearchParams(location.search);
 const orderId = params.get("order_id");
 const sessionId = params.get("session_id");
@@ -29,7 +34,6 @@ const payBtn = document.getElementById("payBtn");
 const DEEP_LINK = "geteasy://payment_success"; 
 
 if (orderId && !sessionId) {
-  // 🔥 Agar session id nahi hai, toh seedha App mein wapas bhej do
   statusEl.textContent = "Verifying payment... Redirecting to app.";
   window.location.href = DEEP_LINK + "?order_id=" + orderId;
 } 
@@ -48,7 +52,7 @@ else if (orderId && sessionId) {
     }).then(() => {
       statusEl.textContent = "Payment done. Redirecting to app...";
       window.location.href = DEEP_LINK + "?order_id=" + orderId;
-    }).catch(() => {
+    }).catch((error) => {
       statusEl.textContent = "Payment cancelled. Redirecting...";
       setTimeout(() => {
         window.location.href = DEEP_LINK + "?order_id=" + orderId;
