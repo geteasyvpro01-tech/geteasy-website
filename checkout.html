@@ -33,18 +33,20 @@
             });
         } else if (orderId) {
             document.getElementById("loader").style.display = "block";
-            document.getElementById("statusText").innerText = "Verifying Payment...";
-            document.getElementById("subText").innerText = "Please wait, checking with bank...";
+            document.getElementById("statusText").innerText = "Payment Successful!";
+            document.getElementById("statusText").style.color = "#22C55E";
+            document.getElementById("subText").innerText = "Preparing to redirect to app...";
             
+            // 🔥 FIX: App ko kholne se pehle 3 second ka time diya hai
             let count = 3;
             const timer = setInterval(() => {
                 count--;
                 if (count > 0) {
-                    document.getElementById("subText").innerText = `Redirecting to app in ${count} seconds...`;
+                    document.getElementById("subText").innerText = `Opening app in ${count} seconds...`;
                 } else {
                     clearInterval(timer);
-                    document.getElementById("statusText").innerText = "Payment Successful!";
-                    document.getElementById("statusText").style.color = "#22C55E";
+                    document.getElementById("subText").innerText = "Opening App...";
+                    // App ko deep link bhejo (Order ID ke sath)
                     window.location.href = "geteasy://payment_success?order_id=" + orderId;
                 }
             }, 1000);
