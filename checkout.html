@@ -35,21 +35,12 @@
             document.getElementById("loader").style.display = "block";
             document.getElementById("statusText").innerText = "Payment Successful!";
             document.getElementById("statusText").style.color = "#22C55E";
-            document.getElementById("subText").innerText = "Preparing to redirect to app...";
+            document.getElementById("subText").innerText = "Opening GetEasy App...";
             
-            // 🔥 FIX: App ko kholne se pehle 3 second ka time diya hai
-            let count = 3;
-            const timer = setInterval(() => {
-                count--;
-                if (count > 0) {
-                    document.getElementById("subText").innerText = `Opening app in ${count} seconds...`;
-                } else {
-                    clearInterval(timer);
-                    document.getElementById("subText").innerText = "Opening App...";
-                    // App ko deep link bhejo (Order ID ke sath)
-                    window.location.href = "geteasy://payment_success?order_id=" + orderId;
-                }
-            }, 1000);
+            // 🔥 DIRECT APP OPEN KAR RAHE HAIN (5 second wait)
+            setTimeout(() => {
+                window.location.href = "geteasy://payment_success?order_id=" + orderId;
+            }, 3000); // 3 second ka wait
         } else {
             showError();
         }
