@@ -1,91 +1,65 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GetEasy Secure Checkout</title>
-    <!-- 🔥 Cashfree JS SDK -->
-    <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
-    <style>
-        body {
-            background-color: #0A0A0A;
-            color: #FFD700;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            flex-direction: column;
-            text-align: center;
-        }
-        .loader {
-            border: 5px solid #1A1A1A;
-            border-top: 5px solid #FFD700;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        h2 { margin-bottom: 10px; font-weight: 600; }
-        p { color: #888888; font-size: 14px; }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GetEasy — Payment</title>
+<script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+<style>
+  body { background:#0A0A0A; color:#fff; font-family:sans-serif; display:flex; align-items:center; justify-content:center; min-height:100vh; margin:0; }
+  .card { background:#141414; padding:30px; border-radius:16px; max-width:400px; width:90%; text-align:center; box-shadow:0 0 40px rgba(255,215,0,0.1); }
+  h2 { color:#FFD700; margin:0 0 16px; }
+  button { background:#FFD700; color:#000; border:0; padding:14px 24px; border-radius:10px; font-weight:bold; font-size:16px; cursor:pointer; margin-top:20px; width:100%; }
+  .msg { color:#aaa; font-size:14px; margin-top:16px; }
+</style>
 </head>
 <body>
+<div class="card">
+  <h2>GetEasy Premium</h2>
+  <div class="msg" id="status">Processing...</div>
+  <button id="payBtn" style="display:none;">Pay Now</button>
+</div>
+<script>
+const params    = new URLSearchParams(location.search);
+const orderId   = params.get("order_id");
+const sessionId = params.get("session_id");
+const statusEl  = document.getElementById("status");
+const payBtn    = document.getElementById("payBtn");
 
-    <div class="loader" id="loader"></div>
-    <h2 id="statusText">Connecting to Secure Gateway...</h2>
-    <p id="subText">Please do not close this window.</p>
+// 🔥 Ye Deep Link app ke SubscriptionActivity se match karna chahiye
+const DEEP_LINK = "geteasy://payment_success"; 
 
-    <script>
-        // 🔥 URL se parameters nikaalo
-        const urlParams = new URLSearchParams(window.location.search);
-        const sessionId = urlParams.get('session_id');
-        const orderId = urlParams.get('order_id');
+function backToApp() {
+  window.location.href = DEEP_LINK + "?order_id=" + orderId;
+}
 
-        if (sessionId) {
-            // 🔥 CASE 1: Naya Payment Start karna hai
-            const cashfree = Cashfree({ mode: "production" });
-            
-            cashfree.checkout({
-                paymentSessionId: sessionId,
-                redirectTarget: "_self" // Payment ke baad isi page pe wapas aayega
-            }).then(result => {
-                if (result.error) {
-                    // Agar JS level pe cancel ho jaye
-                    showError();
-                }
-            });
-
-        } else if (orderId) {
-            // 🔥 CASE 2: Cashfree se wapas aaya hai (Success YA Cancel)
-            // Hum yahan decide nahi karenge, bas App ko order_id bhej denge.
-            // App backend se verify karegi.
-            
-            document.getElementById("statusText").innerText = "Verifying Payment...";
-            document.getElementById("subText").innerText = "Redirecting to GetEasy App...";
-            
-            // App ko Deep Link ke through order_id bhejo
-            setTimeout(() => {
-                window.location.href = "geteasy://payment_success?order_id=" + orderId;
-            }, 500); // 0.5 second ka delay taaki text dikh jaye
-
-        } else {
-            // 🔥 CASE 3: Galat URL
-            showError();
-        }
-
-        function showError() {
-            document.getElementById("loader").style.display = "none";
-            document.getElementById("statusText").innerText = "Invalid Request";
-            document.getElementById("statusText").style.color = "#EF4444";
-            document.getElementById("subText").innerText = "Payment Session or Order ID missing.";
-        }
-    </script>
+if (!orderId || !sessionId) {
+  statusEl.textContent = "Invalid payment link";
+} else {
+  statusEl.textContent = "Ready to pay";
+  payBtn.style.display = "block";
+  payBtn.onclick = () => {
+    payBtn.style.display = "none";
+    statusEl.textContent = "Opening Cashfree...";
+    
+    // Mode: "production" (Live ke liye) ya "sandbox" (Test ke liye)
+    const cashfree = Cashfree({ mode: "production" }); 
+    
+    cashfree.checkout({
+      paymentSessionId: sessionId,
+      redirectTarget: "_self"
+    }).then((result) => {
+      // Payment success ya fail hone par seedha app me bhej do
+      // App khud backend se verify kar legi
+      statusEl.textContent = "Redirecting to app...";
+      backToApp();
+    }).catch((error) => {
+      // Agar user cancel kar de toh bhi wapas bhej do
+      statusEl.textContent = "Payment cancelled. Redirecting...";
+      setTimeout(backToApp, 1500);
+    });
+  };
+}
+</script>
 </body>
 </html>
