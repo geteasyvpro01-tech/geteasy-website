@@ -24,7 +24,7 @@
         const orderId = urlParams.get('order_id');
 
         if (sessionId) {
-            // 🔥 Naya Payment Start karo
+            // 🔥 Payment Start karo
             const cashfree = Cashfree({ mode: "production" });
             cashfree.checkout({
                 paymentSessionId: sessionId,
@@ -38,7 +38,6 @@
             document.getElementById("statusText").innerText = "Verifying Payment...";
             document.getElementById("subText").innerText = "Please wait, checking with bank...";
             
-            // 3 SECOND WAIT TIMER
             let count = 3;
             const timer = setInterval(() => {
                 count--;
@@ -48,6 +47,7 @@
                     clearInterval(timer);
                     document.getElementById("statusText").innerText = "Payment Successful!";
                     document.getElementById("statusText").style.color = "#22C55E";
+                    // App ko wapas bhejo
                     window.location.href = "geteasy://payment_success?order_id=" + orderId;
                 }
             }, 1000);
