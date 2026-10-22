@@ -20,45 +20,44 @@
   <button id="payBtn" style="display:none;">Pay Now</button>
 </div>
 <script>
-const params    = new URLSearchParams(location.search);
-const orderId   = params.get("order_id");
+const params = new URLSearchParams(location.search);
+const orderId = params.get("order_id");
 const sessionId = params.get("session_id");
-const statusEl  = document.getElementById("status");
-const payBtn    = document.getElementById("payBtn");
+const statusEl = document.getElementById("status");
+const payBtn = document.getElementById("payBtn");
 
-// 🔥 Ye Deep Link app ke SubscriptionActivity se match karna chahiye
 const DEEP_LINK = "geteasy://payment_success"; 
 
-function backToApp() {
+// 🔥 FIX: Agar Cashfree se wapas aaye hain (matlab order_id hai par session_id nahi)
+if (orderId && !sessionId) {
+  statusEl.textContent = "Verifying payment... Redirecting to app.";
   window.location.href = DEEP_LINK + "?order_id=" + orderId;
-}
-
-if (!orderId || !sessionId) {
-  statusEl.textContent = "Invalid payment link";
-} else {
+} 
+// Agar App se aaye hain (dono hain)
+else if (orderId && sessionId) {
   statusEl.textContent = "Ready to pay";
   payBtn.style.display = "block";
   payBtn.onclick = () => {
     payBtn.style.display = "none";
     statusEl.textContent = "Opening Cashfree...";
     
-    // Mode: "production" (Live ke liye) ya "sandbox" (Test ke liye)
     const cashfree = Cashfree({ mode: "production" }); 
     
     cashfree.checkout({
       paymentSessionId: sessionId,
       redirectTarget: "_self"
-    }).then((result) => {
-      // Payment success ya fail hone par seedha app me bhej do
-      // App khud backend se verify kar legi
-      statusEl.textContent = "Redirecting to app...";
-      backToApp();
-    }).catch((error) => {
-      // Agar user cancel kar de toh bhi wapas bhej do
+    }).then(() => {
+      statusEl.textContent = "Payment done. Redirecting to app...";
+      window.location.href = DEEP_LINK + "?order_id=" + orderId;
+    }).catch(() => {
       statusEl.textContent = "Payment cancelled. Redirecting...";
-      setTimeout(backToApp, 1500);
+      setTimeout(() => {
+        window.location.href = DEEP_LINK + "?order_id=" + orderId;
+      }, 1500);
     });
   };
+} else {
+  statusEl.textContent = "Invalid payment link";
 }
 </script>
 </body>
