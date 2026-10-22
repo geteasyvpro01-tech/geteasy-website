@@ -24,7 +24,6 @@
         const orderId = urlParams.get('order_id');
 
         if (sessionId) {
-            // 🔥 Payment Start karo
             const cashfree = Cashfree({ mode: "production" });
             cashfree.checkout({
                 paymentSessionId: sessionId,
@@ -33,7 +32,6 @@
                 if (result.error) { showError(); }
             });
         } else if (orderId) {
-            // 🔥 Payment ke baad wapas aaya hai
             document.getElementById("loader").style.display = "block";
             document.getElementById("statusText").innerText = "Verifying Payment...";
             document.getElementById("subText").innerText = "Please wait, checking with bank...";
@@ -47,7 +45,6 @@
                     clearInterval(timer);
                     document.getElementById("statusText").innerText = "Payment Successful!";
                     document.getElementById("statusText").style.color = "#22C55E";
-                    // App ko wapas bhejo
                     window.location.href = "geteasy://payment_success?order_id=" + orderId;
                 }
             }, 1000);
